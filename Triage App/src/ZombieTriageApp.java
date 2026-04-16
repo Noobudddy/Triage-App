@@ -104,10 +104,10 @@ class Patient implements Comparable<Patient> {
 
     private String getPriorityMarker() {
         int score = getConditionPriority() + getAgeModifier();
-        if (score <= 1) return "🔥 ";
-        if (score <= 2) return "⚠️ ";
-        if (score <= 3) return "📌 ";
-        return "   ";
+        if (score <= 1) return "Critical ";
+        if (score <= 2) return "High Priority ";
+        if (score <= 3) return "Moderate Priority";
+        return "Low Priority";
     }
 }
 
@@ -158,84 +158,20 @@ class TriageSystem {
                 turnedAway.add(patient);
                 totalRejected++;
                 conditionStats.put("full zombie", conditionStats.get("full zombie") + 1);
-                System.out.println("⚠️  " + name + " is a FULL ZOMBIE! Turned away/killed for safety.");
+                System.out.println(name + " is a FULL ZOMBIE! Turned away/killed for safety.");
             } else {
                 waitingQueue.add(patient);
                 conditionStats.put(condition.toLowerCase(), conditionStats.get(condition.toLowerCase()) + 1);
-                System.out.println("✅ " + name + " added to triage queue.");
+                System.out.println(name + " added to triage queue.");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("❌ ERROR: " + e.getMessage());
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
-    /*
-    public void processDay() {
-        System.out.println("\n" + "=".repeat(60));
-        System.out.println("📅 DAY " + currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        System.out.println("Week " + currentWeek + ", Day " + ((currentDate.toEpochDay() - weekStartDate.toEpochDay()) % 7 + 1));
-        System.out.println("=".repeat(60));
-
-        // Check and reset weekly capacity
-        checkAndResetWeekly();
-
-        if (waitingQueue.isEmpty()) {
-            System.out.println("No patients waiting today.");
-            currentDate = currentDate.plusDays(1);
-            return;
-        }
-
-        treatedToday.clear();
-        int treated = 0;
-        int remainingDailyCapacity = dailyCapacity;
-        int remainingWeeklyCapacity = weeklyCapacity - treatedThisWeek;
-        int canTreatToday = Math.min(remainingDailyCapacity, remainingWeeklyCapacity);
-
-        System.out.println("\n🏥 PROCESSING PATIENTS");
-        System.out.println("  Daily capacity: " + dailyCapacity);
-        System.out.println("  Weekly remaining: " + remainingWeeklyCapacity);
-        System.out.println("  Can treat today: " + canTreatToday + "\n");
-
-        // Process patients in correct priority order
-        List<Patient> toProcess = new ArrayList<>();
-        PriorityQueue<Patient> tempQueue = new PriorityQueue<>(waitingQueue);
-        while (!tempQueue.isEmpty()) {
-            toProcess.add(tempQueue.poll());
-        }
-
-        for (Patient p : toProcess) {
-            if (treated < canTreatToday && treatedThisWeek < weeklyCapacity) {
-                waitingQueue.remove(p);
-                treatedToday.add(p);
-                treatedHistory.add(p);
-                treated++;
-                totalTreated++;
-                treatedThisWeek++;
-                System.out.println("💉 TREATED: " + p);
-            } else {
-                // Patient will stay in waiting queue for tomorrow
-                System.out.println("⏰ POSTPONED: " + p + " (capacity reached)");
-            }
-        }
-
-        System.out.println("\n📊 DAY SUMMARY:");
-        System.out.println("  - Treated today: " + treatedToday.size() + "/" + dailyCapacity);
-        System.out.println("  - Total treated so far: " + totalTreated);
-        System.out.println("  - Treated this week: " + treatedThisWeek + "/" + weeklyCapacity);
-        System.out.println("  - Turned away (zombies): " + totalRejected);
-        System.out.println("  - Waiting in queue: " + waitingQueue.size());
-
-        currentDate = currentDate.plusDays(1);
-
-        // Print weekly report at end of week or when capacity reached
-        if (treatedThisWeek >= weeklyCapacity || isEndOfWeek()) {
-            printWeeklyReport();
-        }
-    }
-    */
 
     public void processDay() {
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("📅 DAY " + currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        System.out.println("DAY " + currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
         System.out.println("Week " + currentWeek + ", Day " +
                 ((currentDate.toEpochDay() - weekStartDate.toEpochDay()) % 7 + 1));
         System.out.println("=".repeat(60));
@@ -256,7 +192,7 @@ class TriageSystem {
         int remainingWeeklyCapacity = weeklyCapacity - treatedThisWeek;
         int canTreatToday = Math.min(remainingDailyCapacity, remainingWeeklyCapacity);
 
-        System.out.println("\n🏥 PROCESSING PATIENTS");
+        System.out.println("\n PROCESSING PATIENTS");
         System.out.println("  Daily capacity: " + dailyCapacity);
         System.out.println("  Weekly remaining: " + remainingWeeklyCapacity);
         System.out.println("  Can treat today: " + canTreatToday + "\n");
@@ -266,7 +202,7 @@ class TriageSystem {
                 && treated < canTreatToday
                 && treatedThisWeek < weeklyCapacity) {
 
-            Patient p = waitingQueue.poll();  // ⭐ KEY FIX
+            Patient p = waitingQueue.poll();  //  KEY FIX
 
             treatedToday.add(p);
             treatedHistory.add(p);
@@ -275,17 +211,17 @@ class TriageSystem {
             totalTreated++;
             treatedThisWeek++;
 
-            System.out.println("💉 TREATED: " + p);
+            System.out.println("TREATED: " + p);
         }
 
         // ✅ Remaining patients stay in queue (postponed)
         if (!waitingQueue.isEmpty()) {
             for (Patient p : waitingQueue) {
-                System.out.println("⏰ POSTPONED: " + p + " (capacity reached)");
+                System.out.println("POSTPONED: " + p + " (capacity reached)");
             }
         }
 
-        System.out.println("\n📊 DAY SUMMARY:");
+        System.out.println("\n DAY SUMMARY:");
         System.out.println("  - Treated today: " + treatedToday.size() + "/" + dailyCapacity);
         System.out.println("  - Total treated so far: " + totalTreated);
         System.out.println("  - Treated this week: " + treatedThisWeek + "/" + weeklyCapacity);
@@ -303,7 +239,7 @@ class TriageSystem {
 
     private void checkAndResetWeekly() {
         if (isEndOfWeek()) {
-            System.out.println("\n🔄 NEW WEEK STARTING! Resetting weekly counter.");
+            System.out.println("\n NEW WEEK STARTING! Resetting weekly counter.");
             treatedThisWeek = 0;
             currentWeek++;
             weekStartDate = currentDate;
@@ -316,7 +252,7 @@ class TriageSystem {
     }
 
     public void printWeeklyReport() {
-        System.out.println("\n📊 === WEEKLY REPORT (Week " + currentWeek + ") ===");
+        System.out.println("\n === WEEKLY REPORT (Week " + currentWeek + ") ===");
         System.out.println("Week ending: " + currentDate.minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
         System.out.println("Total treated this week: " + treatedThisWeek);
         System.out.println("Cures remaining this week: " + (weeklyCapacity - treatedThisWeek));
@@ -324,7 +260,7 @@ class TriageSystem {
         System.out.println("Total zombies eliminated: " + totalRejected);
 
         if (treatedThisWeek >= weeklyCapacity) {
-            System.out.println("\n⚠️  WEEKLY CURE LIMIT REACHED! No more treatments until next week.");
+            System.out.println("\n WEEKLY CURE LIMIT REACHED! No more treatments until next week.");
         }
 
         System.out.println("\nCondition Statistics (All Time):");
@@ -337,12 +273,12 @@ class TriageSystem {
 
     public void showQueue() {
         if (waitingQueue.isEmpty()) {
-            System.out.println("\n📋 No patients waiting.");
+            System.out.println("\n No patients waiting.");
             return;
         }
 
-        System.out.println("\n📋 CURRENT TRIAGE QUEUE (by priority):");
-        System.out.println("🔥 = Highest Priority  ⚠️ = High Priority  📌 = Normal Priority");
+        System.out.println("\n CURRENT TRIAGE QUEUE (by priority):");
+        System.out.println("Critical Priority  High Priority  Moderate Priority");
         System.out.println("-".repeat(60));
 
         PriorityQueue<Patient> tempQueue = new PriorityQueue<>(waitingQueue);
@@ -356,7 +292,7 @@ class TriageSystem {
     }
 
     public void showStatistics() {
-        System.out.println("\n📈 === HOSPITAL STATISTICS ===");
+        System.out.println("\n === HOSPITAL STATISTICS ===");
         System.out.println("Total treated patients: " + totalTreated);
         System.out.println("Total zombies turned away: " + totalRejected);
         System.out.println("Current waiting queue size: " + waitingQueue.size());
@@ -387,9 +323,9 @@ class TriageSystem {
             for (Patient p : treatedHistory) {
                 writer.printf("%s,%d,%s,%d%n", p.getName(), p.getAge(), p.getCondition(), p.getArrivalOrder());
             }
-            System.out.println("✅ Data saved to " + filename);
+            System.out.println("Data saved to " + filename);
         } catch (IOException e) {
-            System.out.println("❌ Error saving data: " + e.getMessage());
+            System.out.println("Error saving data: " + e.getMessage());
         }
     }
 
@@ -409,7 +345,7 @@ public class ZombieTriageApp {
     private static TriageSystem triage;
 
     public static void main(String[] args) {
-        System.out.println("🧟‍♂️ ZOMBIE APOCALYPSE FIELD HOSPITAL TRIAGE SYSTEM 🧟‍♀️");
+        System.out.println("ZOMBIE APOCALYPSE FIELD HOSPITAL TRIAGE SYSTEM");
         System.out.println("=".repeat(60));
         System.out.println("NOTE: Limited cure - 50 people per day, 350 per week");
         System.out.println("=".repeat(60));
@@ -447,7 +383,7 @@ public class ZombieTriageApp {
                     break;
                 case 8:
                     running = false;
-                    System.out.println("\n🏥 Field hospital closing. Stay safe!");
+                    System.out.println("\n Field hospital closing. Stay safe!");
                     break;
                 default:
                     System.out.println("Invalid option. Try again.");
@@ -460,19 +396,19 @@ public class ZombieTriageApp {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("MAIN MENU");
         System.out.println("=".repeat(60));
-        System.out.println("1. 🚑 Add new patient");
-        System.out.println("2. 💉 Process day (treat up to 50 patients)");
-        System.out.println("3. 📋 View current triage queue");
-        System.out.println("4. 📊 View statistics");
-        System.out.println("5. 📖 Show priority rules");
-        System.out.println("6. 🧪 Load sample patients");
-        System.out.println("7. 💾 Save data to file");
-        System.out.println("8. 🚪 Exit");
+        System.out.println("1. Add new patient");
+        System.out.println("2. Process day (treat up to 50 patients)");
+        System.out.println("3. View current triage queue");
+        System.out.println("4. View statistics");
+        System.out.println("5. Show priority rules");
+        System.out.println("6. Load sample patients");
+        System.out.println("7. Save data to file");
+        System.out.println("8. Exit");
         System.out.println("=".repeat(60));
     }
 
     private static void addNewPatient() {
-        System.out.println("\n🚑 ADD NEW PATIENT");
+        System.out.println("\n ADD NEW PATIENT");
         System.out.println("-".repeat(40));
 
         System.out.print("Patient name: ");
@@ -495,15 +431,15 @@ public class ZombieTriageApp {
     }
 
     private static void printPriorityRules() {
-        System.out.println("\n📖 TRIAGE PRIORITY RULES");
+        System.out.println("\n TRIAGE PRIORITY RULES");
         System.out.println("=".repeat(60));
         System.out.println("PRIORITY ORDER (highest to lowest):");
-        System.out.println("  1. 🧬 MUTATING - Base priority 1");
-        System.out.println("  2. 🩸 BLEEDING NON-STOP - Base priority 2");
-        System.out.println("  3. 🌡️ FEVER - Base priority 3");
-        System.out.println("  4. 🦷 INFECTED/BITE - Base priority 4");
-        System.out.println("  5. 😨 SCARED (not infected) - Base priority 6");
-        System.out.println("  6. 🧟 FULL ZOMBIE - Turn away/kill");
+        System.out.println("  1. MUTATING - Base priority 1");
+        System.out.println("  2. BLEEDING NON-STOP - Base priority 2");
+        System.out.println("  3. FEVER - Base priority 3");
+        System.out.println("  4. INFECTED/BITE - Base priority 4");
+        System.out.println("  5. SCARED (not infected) - Base priority 6");
+        System.out.println("  6. FULL ZOMBIE - Turn away/kill");
         System.out.println("\nAGE MODIFIERS:");
         System.out.println("  - Young adults (<25): -1 (HIGHER priority)");
         System.out.println("  - Adults (25-50): 0 (Normal priority)");
@@ -514,7 +450,7 @@ public class ZombieTriageApp {
         System.out.println("  - Young bleeding (20yo): 2 + (-1) = 1 (VERY HIGH)");
         System.out.println("  - Elderly mutating (70yo): 1 + 1 = 2 (HIGH)");
         System.out.println("  → Young bleeding gets treated FIRST despite condition!");
-        System.out.println("\n🏥 CAPACITY:");
+        System.out.println("\n CAPACITY:");
         System.out.println("  - 50 cures per day");
         System.out.println("  - 350 cures per week");
         System.out.println("  - Treatment stops when weekly limit reached");
@@ -531,7 +467,7 @@ public class ZombieTriageApp {
     }
 
     private static void addSamplePatients() {
-        System.out.println("\n📝 Loading sample patients for demonstration...");
+        System.out.println("\n Loading sample patients for demonstration...");
 
         // Test case 1: Priority inversion fix
         triage.addPatient("Sarah (Young Bleeding)", "bleeding", 20);
@@ -553,7 +489,7 @@ public class ZombieTriageApp {
         triage.addPatient("Boundary4 (Age 51)", "scared", 51);
 
         System.out.println("\n✓ Sample patients loaded!");
-        System.out.println("\n🔍 NOTE: Watch how 'Sarah (Young Bleeding)' gets treated BEFORE");
+        System.out.println("\n NOTE: Watch how 'Sarah (Young Bleeding)' gets treated BEFORE");
         System.out.println("   'George (Elderly Mutating)' despite mutating being higher");
         System.out.println("   priority - this demonstrates the age modifier fix!\n");
     }
