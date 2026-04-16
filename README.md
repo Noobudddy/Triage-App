@@ -38,6 +38,30 @@ This project includes:
 
 ---
 
+## 🛠️ How to Run
+
+### 1. Compile
+
+```
+javac ZombieTriageApp.java
+```
+
+### 2. Run Application
+
+```
+java ZombieTriageApp
+```
+
+### 3. Run Tests (JUnit 5)
+
+Make sure JUnit 5 is installed, then run:
+
+```
+ConsoleLauncher --select-class ZombieTriageFixedTest
+```
+
+---
+
 ### 📊 Priority System
 
 Each patient is assigned a **priority score**:
@@ -114,16 +138,6 @@ Priority Score = Condition Priority + Age Modifier
 
 ---
 
-### 💾 Data Persistence
-
-* Save system state to file:
-
-```
-triage.saveData("filename.txt");
-```
-
----
-
 ### 🖥️ Command-Line Interface
 
 Menu options:
@@ -178,30 +192,6 @@ The project includes a **comprehensive test suite** covering:
 
 ---
 
-## 🛠️ How to Run
-
-### 1. Compile
-
-```
-javac ZombieTriageApp.java
-```
-
-### 2. Run Application
-
-```
-java ZombieTriageApp
-```
-
-### 3. Run Tests (JUnit 5)
-
-Make sure JUnit 5 is installed, then run:
-
-```
-ConsoleLauncher --select-class ZombieTriageFixedTest
-```
-
----
-
 ## 🧩 Project Structure
 
 ```
@@ -228,15 +218,6 @@ ConsoleLauncher --select-class ZombieTriageFixedTest
 ### ✅ Input Validation
 
 * Prevents invalid data from entering system
-
----
-
-## 🚀 Future Improvements
-
-* GUI interface (JavaFX or Swing)
-* Persistent database storage
-* Real-time monitoring dashboard
-* Multiplayer simulation mode
 
 ---
 
